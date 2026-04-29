@@ -1,0 +1,48 @@
+{{define "title"}}Profile — Insighta Labs+{{end}} {{define "content"}}
+<div class="page-header">
+  <a href="/profiles" class="back-link">← All Profiles</a>
+  <h1>{{index .Profile "name"}}</h1>
+</div>
+
+<div class="profile-card">
+  <div class="profile-grid">
+    <div class="profile-field">
+      <span class="field-label">Name</span>
+      <span class="field-value">{{index .Profile "name"}}</span>
+    </div>
+    <div class="profile-field">
+      <span class="field-label">Gender</span>
+      <span class="field-value"
+        >{{index .Profile "gender"}}
+        <small class="text-muted"
+          >({{index .Profile "gender_probability"}} confidence)</small
+        ></span
+      >
+    </div>
+    <div class="profile-field">
+      <span class="field-label">Age</span>
+      <span class="field-value"
+        >{{index .Profile "age"}} —
+        <span class="badge">{{index .Profile "age_group"}}</span></span
+      >
+    </div>
+    <div class="profile-field">
+      <span class="field-label">Country</span>
+      <span class="field-value"
+        >{{index .Profile "country_name"}} ({{index .Profile "country_id"}})
+        <small class="text-muted"
+          >({{index .Profile "country_probability"}} confidence)</small
+        ></span
+      >
+    </div>
+    <div class="profile-field">
+      <span class="field-label">Profile ID</span>
+      <span class="field-value field-mono">{{index .Profile "id"}}</span>
+    </div>
+    <div class="profile-field">
+      <span class="field-label">Created</span>
+      <span class="field-value">{{index .Profile "created_at"}}</span>
+    </div>
+  </div>
+</div>
+{{end}}

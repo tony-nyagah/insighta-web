@@ -1,0 +1,51 @@
+{{define "profiles_table_content"}}
+{{if .Profiles}}
+<div class="table-meta">
+  Showing {{len .Profiles}} of {{.Total}} profiles &nbsp;·&nbsp; Page {{.Page}} of {{.TotalPages}}
+</div>
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Age Group</th>
+      <th>Country</th>
+      <th>Created</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Profiles}}
+    <tr>
+      <td><strong>{{index . "name"}}</strong></td>
+      <td>{{index . "gender"}}</td>
+      <td>{{index . "age"}}</td>
+      <td><span class="badge">{{index . "age_group"}}</span></td>
+      <td>{{index . "country_name"}} ({{index . "country_id"}})</td>
+      <td>{{index . "created_at"}}</td>
+      <td><a href="/profiles/{{index . "id"}}" class="btn-sm">View</a></td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+
+<div class="pagination">
+  {{if gt .PrevPage 0}}
+  <a class="btn btn-secondary"
+     hx-get="/profiles?page={{.PrevPage}}&limit={{.Limit}}"
+     hx-target="#profiles-container"
+     hx-push-url="true">← Prev</a>
+  {{end}}
+  <span class="page-info">{{.Page}} / {{.TotalPages}}</span>
+  {{if lt .Page .TotalPages}}
+  <a class="btn btn-secondary"
+     hx-get="/profiles?page={{.NextPage}}&limit={{.Limit}}"
+     hx-target="#profiles-container"
+     hx-push-url="true">Next →</a>
+  {{end}}
+</div>
+{{else}}
+<p class="empty-state">No profiles match your filters.</p>
+{{end}}
+{{end}}

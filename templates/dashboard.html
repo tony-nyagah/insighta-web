@@ -1,0 +1,48 @@
+{{define "title"}}Dashboard — Insighta Labs+{{end}} {{define "content"}}
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <p class="text-muted">
+    Welcome back, <strong>@{{.User.Username}}</strong> ·
+    <span class="badge badge-{{.User.Role}}">{{.User.Role}}</span>
+  </p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-value">{{.Total}}</div>
+    <div class="stat-label">Total Profiles</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{.TotalPages}}</div>
+    <div class="stat-label">Pages</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{.User.Role}}</div>
+    <div class="stat-label">Your Role</div>
+  </div>
+</div>
+
+<div class="quick-actions">
+  <h2>Quick Actions</h2>
+  <div class="action-grid">
+    <a href="/profiles" class="action-card">
+      <span class="action-icon">👥</span>
+      <span>Browse Profiles</span>
+    </a>
+    <a href="/search" class="action-card">
+      <span class="action-icon">🔍</span>
+      <span>Natural Language Search</span>
+    </a>
+    <a href="/profiles/export?format=csv" class="action-card">
+      <span class="action-icon">📥</span>
+      <span>Export CSV</span>
+    </a>
+    {{if eq .User.Role "admin"}}
+    <a href="/profiles/new" class="action-card">
+      <span class="action-icon">➕</span>
+      <span>Create Profile</span>
+    </a>
+    {{end}}
+  </div>
+</div>
+{{end}}

@@ -1,0 +1,23 @@
+{{define "search_results_content"}}
+{{if .Results}}
+<p class="search-count">{{len .Results}} result(s) for "<em>{{.Query}}</em>"</p>
+<table class="data-table">
+  <thead>
+    <tr><th>Name</th><th>Gender</th><th>Age</th><th>Country</th><th></th></tr>
+  </thead>
+  <tbody>
+    {{range .Results}}
+    <tr>
+      <td>{{index . "name"}}</td>
+      <td>{{index . "gender"}}</td>
+      <td>{{index . "age"}}</td>
+      <td>{{index . "country_name"}}</td>
+      <td><a href="/profiles/{{index . "id"}}" class="btn-sm">View</a></td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+{{else if .Query}}
+<p class="empty-state">No results for "<em>{{.Query}}</em>"</p>
+{{end}}
+{{end}}
