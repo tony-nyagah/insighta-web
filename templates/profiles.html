@@ -3,14 +3,14 @@
 <div class="page-header">
   <h1>Profiles</h1>
   <div class="page-header-actions">
-    <a href="/profiles/export?format=csv{{if .Filters.gender}}&gender={{.Filters.gender}}{{end}}{{if .Filters.country_id}}&country_id={{.Filters.country_id}}{{end}}" class="btn btn-secondary">Export CSV</a>
-    {{if eq .User.Role "admin"}}<a href="/profiles/new" class="btn btn-primary">+ New Profile</a>{{end}}
+    <a href="{{.BasePath}}/profiles/export?format=csv{{if .Filters.gender}}&gender={{.Filters.gender}}{{end}}{{if .Filters.country_id}}&country_id={{.Filters.country_id}}{{end}}" class="btn btn-secondary">Export CSV</a>
+    {{if eq .User.Role "admin"}}<a href="{{.BasePath}}/profiles/new" class="btn btn-primary">+ New Profile</a>{{end}}
   </div>
 </div>
 
 <!-- Filters — HTMX pushes updated table without full page reload -->
 <form class="filter-bar"
-      hx-get="/profiles"
+      hx-get="{{.BasePath}}/profiles"
       hx-target="#profiles-container"
       hx-push-url="true"
       hx-trigger="change, submit">

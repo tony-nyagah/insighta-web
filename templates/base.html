@@ -1,46 +1,52 @@
 {{define "base"}}
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{block "title" .}}Insighta Labs+{{end}}</title>
-    <link rel="stylesheet" href="/static/css/app.css" />
-    <!-- HTMX — CSRF token injected on every HTMX request via meta tag -->
-    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
-    <meta name="htmx-config" content='{"defaultSwapStyle":"innerHTML"}' />
-    {{if .CSRFToken}}
-    <meta name="csrf-token" content="{{.CSRFToken}}" />
-    <script>
-      document.addEventListener("htmx:configRequest", function (e) {
-        e.detail.headers["X-CSRF-Token"] = document.querySelector(
-          "meta[name=csrf-token]",
-        ).content;
-      });
-    </script>
-    {{end}}
-  </head>
-  <body>
-    {{if .User}}
-    <nav class="navbar">
-      <a class="navbar-brand" href="/dashboard">⚡ Insighta</a>
-      <div class="nav-links">
-        <a href="/profiles">Profiles</a>
-        <a href="/search">Search</a>
-        <a href="/account">@{{.User.Username}}</a>
-        <form method="POST" action="/logout" style="display: inline">
-          <input
-            type="hidden"
-            name="gorilla.csrf.Token"
-            value="{{.CSRFToken}}"
-          />
-          <button type="submit" class="btn-link">Logout</button>
-        </form>
-      </div>
-    </nav>
-    {{end}}
-    <main class="container">{{block "content" .}}{{end}}</main>
-    <footer class="footer">Insighta Labs+ © 2026</footer>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{block "title" .}}Insighta Labs+{{end}}</title>
+        <link rel="stylesheet" href="{{.BasePath}}/static/css/app.css" />
+        <!-- HTMX — CSRF token injected on every HTMX request via meta tag -->
+        <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+        <meta name="htmx-config" content='{"defaultSwapStyle":"innerHTML"}' />
+        {{if .CSRFToken}}
+        <meta name="csrf-token" content="{{.CSRFToken}}" />
+        <script>
+            document.addEventListener("htmx:configRequest", function (e) {
+                e.detail.headers["X-CSRF-Token"] = document.querySelector(
+                    "meta[name=csrf-token]",
+                ).content;
+            });
+        </script>
+        {{end}}
+    </head>
+    <body>
+        {{if .User}}
+        <nav class="navbar">
+            <a class="navbar-brand" href="{{.BasePath}}/dashboard"
+                >⚡ Insighta</a
+            >
+            <div class="nav-links">
+                <a href="{{.BasePath}}/profiles">Profiles</a>
+                <a href="{{.BasePath}}/search">Search</a>
+                <a href="{{.BasePath}}/account">@{{.User.Username}}</a>
+                <form
+                    method="POST"
+                    action="{{.BasePath}}/logout"
+                    style="display: inline"
+                >
+                    <input
+                        type="hidden"
+                        name="gorilla.csrf.Token"
+                        value="{{.CSRFToken}}"
+                    />
+                    <button type="submit" class="btn-link">Logout</button>
+                </form>
+            </div>
+        </nav>
+        {{end}}
+        <main class="container">{{block "content" .}}{{end}}</main>
+        <footer class="footer">Insighta Labs+ © 2026</footer>
+    </body>
 </html>
 {{end}}

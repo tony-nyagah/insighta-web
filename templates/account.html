@@ -1,30 +1,32 @@
 {{define "title"}}Account — Insighta Labs+{{end}} {{define "content"}}
 <div class="page-header">
-  <h1>Account</h1>
+    <h1>Account</h1>
 </div>
 
 <div class="account-card">
-  <div class="profile-field">
-    <span class="field-label">Username</span>
-    <span class="field-value">@{{.User.Username}}</span>
-  </div>
-  <div class="profile-field">
-    <span class="field-label">Role</span>
-    <span class="field-value"
-      ><span class="badge badge-{{.User.Role}}">{{.User.Role}}</span></span
-    >
-  </div>
-  <div class="profile-field">
-    <span class="field-label">User ID</span>
-    <span class="field-value field-mono">{{.User.UserID}}</span>
-  </div>
+    <div class="profile-field">
+        <span class="field-label">Username</span>
+        <span class="field-value">@{{.User.Username}}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-label">Role</span>
+        <span class="field-value"
+            ><span class="badge badge-{{.User.Role}}"
+                >{{.User.Role}}</span
+            ></span
+        >
+    </div>
+    <div class="profile-field">
+        <span class="field-label">User ID</span>
+        <span class="field-value field-mono">{{.User.UserID}}</span>
+    </div>
 </div>
 
 <div class="danger-zone">
-  <h2>Session</h2>
-  <form method="POST" action="/logout">
-    <input type="hidden" name="gorilla.csrf.Token" value="{{.CSRFToken}}" />
-    <button type="submit" class="btn btn-danger">Sign out</button>
-  </form>
+    <h2>Session</h2>
+    <form method="POST" action="{{.BasePath}}/logout">
+        <input type="hidden" name="gorilla.csrf.Token" value="{{.CSRFToken}}" />
+        <button type="submit" class="btn btn-danger">Sign out</button>
+    </form>
 </div>
 {{end}}

@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/csrf"
@@ -16,6 +17,16 @@ import (
 	"insighta-web/internal/client"
 	"insighta-web/internal/session"
 )
+
+// basePath is the URL prefix the app is mounted at (e.g. "/insighta").
+// Set via SetBasePath during startup. Empty string means root.
+var basePath string
+
+// SetBasePath stores the base path for use in redirects and template data.
+func SetBasePath(p string) {
+	// Normalise: no trailing slash
+	basePath = strings.TrimRight(p, "/")
+}
 
 // Dashboard renders the main dashboard with aggregate counts.
 func Dashboard(w http.ResponseWriter, r *http.Request) {
@@ -84,15 +95,15 @@ func ProfilesList(w http.ResponseWriter, r *http.Request) {
 
 	page, _ := strconv.Atoi(apiParams.Get("page"))
 	data := map[string]interface{}{
-		"User":       sess,
-		"Profiles":   resp.Data,
-		"Page":       resp.Page,
-		"Limit":      resp.Limit,
-		"Total":      resp.Total,
-		"TotalPages": resp.TotalPages,
-		"PrevPage":   page - 1,
-		"NextPage":   page + 1,
-		"Filters":    params, // pass back so the form stays populated
+		"User":           sess,
+		"Profiles":       resp.Data,
+		"Page":           resp.Page,
+		"Limit":          resp.Limit,
+		"Total":          resp.Total,
+		"TotalPages":     resp.TotalPages,
+		"PrevPage":       page - 1,
+		"NextPage":       page + 1,
+		"Filters":        params, // pass back so the form stays populated
 		csrf.TemplateTag: csrf.TemplateField(r),
 	}
 
@@ -139,9 +150,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query().Get("q")
 	data := map[string]interface{}{
-		"User":    sess,
-		"Query":   q,
-		"Results": []map[string]interface{}{},
+		"User":           sess,
+		"Query":          q,
+		"Results":        []map[string]interface{}{},
 		csrf.TemplateTag: csrf.TemplateField(r),
 	}
 
@@ -224,6 +235,7 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, name string, data ma
 	if data == nil {
 		data = map[string]interface{}{}
 	}
+	data["BasePath"] = basePath
 	data["CSRFToken"] = csrf.Token(r)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := t.ExecuteTemplate(w, "base", data); err != nil {
@@ -237,6 +249,10 @@ func renderPartial(w http.ResponseWriter, r *http.Request, name string, data map
 		http.Error(w, "template error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+	if data == nil {
+		data = map[string]interface{}{}
+	}
+	data["BasePath"] = basePath
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	t.Execute(w, data)
 }
@@ -249,7 +265,7 @@ func renderError(w http.ResponseWriter, r *http.Request, status int, msg string)
 func requireSession(w http.ResponseWriter, r *http.Request) *session.Data {
 	sess, err := session.Get(r)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusFound)
+		http.Redirect(w, r, basePath+"/", http.StatusFound)
 		return nil
 	}
 	return sess

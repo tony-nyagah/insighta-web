@@ -12,7 +12,7 @@
       <td>{{index . "gender"}}</td>
       <td>{{index . "age"}}</td>
       <td>{{index . "country_name"}}</td>
-      <td><a href="/profiles/{{index . "id"}}" class="btn-sm">View</a></td>
+      <td><a href="{{$.BasePath}}/profiles/{{index . "id"}}" class="btn-sm">View</a></td>
     </tr>
     {{end}}
   </tbody>

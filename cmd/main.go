@@ -29,6 +29,9 @@ func main() {
 	// Init encrypted session cookie store
 	session.Init()
 
+	// Configure sub-path mounting (e.g. BASE_PATH=/insighta)
+	handlers.SetBasePath(os.Getenv("BASE_PATH"))
+
 	// Resolve template directory — dev: relative to source, prod: relative to CWD
 	tmplDir := os.Getenv("TEMPLATE_DIR")
 	if tmplDir == "" {

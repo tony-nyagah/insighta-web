@@ -19,7 +19,7 @@ import (
 func LoginPage(w http.ResponseWriter, r *http.Request) {
 	// If already logged in, redirect to dashboard
 	if _, err := session.Get(r); err == nil {
-		http.Redirect(w, r, "/dashboard", http.StatusFound)
+		http.Redirect(w, r, basePath+"/dashboard", http.StatusFound)
 		return
 	}
 	renderTemplate(w, r, "login.html", map[string]interface{}{
@@ -95,7 +95,7 @@ func GithubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/dashboard", http.StatusFound)
+	http.Redirect(w, r, basePath+"/dashboard", http.StatusFound)
 }
 
 // Logout clears the session cookie and invalidates the refresh token.
@@ -110,7 +110,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		http.Post(apiURL+"/auth/logout", "application/json", bytes.NewReader(b))
 	}
 	session.Clear(w)
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(w, r, basePath+"/", http.StatusFound)
 }
 
 // AccountPage renders the account/profile page for the logged-in user.

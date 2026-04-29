@@ -24,7 +24,7 @@
       <td><span class="badge">{{index . "age_group"}}</span></td>
       <td>{{index . "country_name"}} ({{index . "country_id"}})</td>
       <td>{{index . "created_at"}}</td>
-      <td><a href="/profiles/{{index . "id"}}" class="btn-sm">View</a></td>
+      <td><a href="{{$.BasePath}}/profiles/{{index . "id"}}" class="btn-sm">View</a></td>
     </tr>
     {{end}}
   </tbody>
@@ -33,14 +33,14 @@
 <div class="pagination">
   {{if gt .PrevPage 0}}
   <a class="btn btn-secondary"
-     hx-get="/profiles?page={{.PrevPage}}&limit={{.Limit}}"
+     hx-get="{{.BasePath}}/profiles?page={{.PrevPage}}&limit={{.Limit}}"
      hx-target="#profiles-container"
      hx-push-url="true">← Prev</a>
   {{end}}
   <span class="page-info">{{.Page}} / {{.TotalPages}}</span>
   {{if lt .Page .TotalPages}}
   <a class="btn btn-secondary"
-     hx-get="/profiles?page={{.NextPage}}&limit={{.Limit}}"
+     hx-get="{{.BasePath}}/profiles?page={{.NextPage}}&limit={{.Limit}}"
      hx-target="#profiles-container"
      hx-push-url="true">Next →</a>
   {{end}}
