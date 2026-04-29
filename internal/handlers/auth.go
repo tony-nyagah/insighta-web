@@ -28,8 +28,14 @@ func LoginPage(w http.ResponseWriter, r *http.Request) {
 }
 
 // InitiateGithubLogin redirects the browser to the backend OAuth entry point.
+// Uses PUBLIC_API_URL when set (browser-facing), falling back to INSIGHTA_API_URL.
+// This matters in Docker: INSIGHTA_API_URL points to the internal container hostname
+// (e.g. http://backend:8080) which the browser cannot resolve.
 func InitiateGithubLogin(w http.ResponseWriter, r *http.Request) {
-	apiURL := os.Getenv("INSIGHTA_API_URL")
+	apiURL := os.Getenv("PUBLIC_API_URL")
+	if apiURL == "" {
+		apiURL = os.Getenv("INSIGHTA_API_URL")
+	}
 	if apiURL == "" {
 		apiURL = "https://api.insighta.app"
 	}
