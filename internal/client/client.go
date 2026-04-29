@@ -12,6 +12,11 @@ import (
 	"insighta-web/internal/session"
 )
 
+const (
+	maxRetries    = 3
+	retryBaseWait = 500 * time.Millisecond
+)
+
 // Client calls the backend API on behalf of a logged-in web user,
 // transparently refreshing the access token when needed.
 type Client struct {
@@ -46,18 +51,27 @@ func (c *Client) GetRaw(path string) ([]byte, string, error) {
 	if err := c.ensureFreshToken(); err != nil {
 		return nil, "", err
 	}
-	req, err := http.NewRequest(http.MethodGet, c.baseURL+path, nil)
-	if err != nil {
-		return nil, "", err
+	for attempt := 0; attempt <= maxRetries; attempt++ {
+		if attempt > 0 {
+			time.Sleep(retryBaseWait << (attempt - 1))
+		}
+		req, err := http.NewRequest(http.MethodGet, c.baseURL+path, nil)
+		if err != nil {
+			return nil, "", err
+		}
+		c.setHeaders(req)
+		resp, err := c.httpClient.Do(req)
+		if err != nil {
+			return nil, "", err
+		}
+		raw, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if resp.StatusCode == http.StatusTooManyRequests {
+			continue
+		}
+		return raw, resp.Header.Get("Content-Disposition"), nil
 	}
-	c.setHeaders(req)
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, "", err
-	}
-	defer resp.Body.Close()
-	raw, _ := io.ReadAll(resp.Body)
-	return raw, resp.Header.Get("Content-Disposition"), nil
+	return nil, "", fmt.Errorf("rate limit exceeded — please slow down and try again")
 }
 
 func (c *Client) do(method, path string, body interface{}) ([]byte, int, error) {
@@ -65,7 +79,7 @@ func (c *Client) do(method, path string, body interface{}) ([]byte, int, error) 
 		return nil, http.StatusUnauthorized, err
 	}
 
-	raw, status, err := c.send(method, path, body)
+	raw, status, err := c.sendWithRetry(method, path, body)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -73,7 +87,7 @@ func (c *Client) do(method, path string, body interface{}) ([]byte, int, error) 
 		if rerr := c.refresh(); rerr != nil {
 			return nil, status, fmt.Errorf("session expired")
 		}
-		raw, status, err = c.send(method, path, body)
+		raw, status, err = c.sendWithRetry(method, path, body)
 	}
 	return raw, status, err
 }
@@ -99,6 +113,21 @@ func (c *Client) send(method, path string, body interface{}) ([]byte, int, error
 	defer resp.Body.Close()
 	raw, _ := io.ReadAll(resp.Body)
 	return raw, resp.StatusCode, nil
+}
+
+// sendWithRetry wraps send with exponential backoff on HTTP 429 responses.
+// Waits 500 ms, 1 s, 2 s between attempts before giving up.
+func (c *Client) sendWithRetry(method, path string, body interface{}) ([]byte, int, error) {
+	for attempt := 0; attempt <= maxRetries; attempt++ {
+		if attempt > 0 {
+			time.Sleep(retryBaseWait << (attempt - 1))
+		}
+		raw, status, err := c.send(method, path, body)
+		if err != nil || status != http.StatusTooManyRequests {
+			return raw, status, err
+		}
+	}
+	return nil, http.StatusTooManyRequests, fmt.Errorf("rate limit exceeded — please slow down and try again")
 }
 
 func (c *Client) setHeaders(req *http.Request) {

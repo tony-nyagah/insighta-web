@@ -1,5 +1,6 @@
 services:
   web:
+    container_name: insighta-web
     build: .
     ports:
       - "8069:3000"
@@ -14,4 +15,3 @@ services:
       ENV: ${ENV:-development}
     env_file:
       - ../.env.local
-
