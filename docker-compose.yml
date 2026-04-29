@@ -1,0 +1,17 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8069:3000"
+    environment:
+      WEB_PORT: 3000
+      INSIGHTA_API_URL: ${INSIGHTA_API_URL:-http://localhost:8080}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      SESSION_HASH_KEY: ${SESSION_HASH_KEY}
+      SESSION_BLOCK_KEY: ${SESSION_BLOCK_KEY}
+      CSRF_AUTH_KEY: ${CSRF_AUTH_KEY}
+      ENV: ${ENV:-development}
+    env_file:
+      - ../.env.local
+
