@@ -27,7 +27,7 @@ type Client struct {
 }
 
 func New(w http.ResponseWriter, sess *session.Data) *Client {
-	base := os.Getenv("INSIGHTA_API_URL")
+	base := os.Getenv("API_URL")
 	if base == "" {
 		base = "https://api.insighta.app"
 	}

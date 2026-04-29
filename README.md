@@ -24,20 +24,20 @@ Browser ──(HTTPS)──► insighta-web (Go, chi, Go templates, HTMX)
 
 ```bash
 cp .env.example .env
-# edit .env — set INSIGHTA_API_URL, SESSION_*, CSRF_AUTH_KEY
+# edit .env — set API_URL, SESSION_*, CSRF_AUTH_KEY
 
 # run from the web/stage-3 directory so relative template/static paths resolve
 go run ./cmd
 ```
 
-The server listens on `WEB_PORT` (default `3000`). The backend must be running and accessible at `INSIGHTA_API_URL`.
+The server listens on `WEB_PORT` (default `3000`). The backend must be running and accessible at `API_URL`.
 
 ## Configuration
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
 | `WEB_PORT` | No | `3000` | HTTP listen port |
-| `INSIGHTA_API_URL` | No | `https://api.insighta.app` | Backend base URL |
+| `API_URL` | No | `https://api.insighta.app` | Backend base URL |
 | `SESSION_HASH_KEY` | **Yes** | — | 32-64 byte HMAC key for session cookie signing |
 | `SESSION_BLOCK_KEY` | **Yes** | — | 16/24/32 byte AES key for session cookie encryption |
 | `CSRF_AUTH_KEY` | **Yes** | — | 32 byte key for gorilla/csrf |
@@ -92,7 +92,7 @@ docker run -p 3000:3000 \
   -e SESSION_HASH_KEY=… \
   -e SESSION_BLOCK_KEY=… \
   -e CSRF_AUTH_KEY=… \
-  -e INSIGHTA_API_URL=http://backend:8080 \
+  -e API_URL=http://backend:8080 \
   -e ENV=production \
   insighta-web
 ```

@@ -28,13 +28,13 @@ func LoginPage(w http.ResponseWriter, r *http.Request) {
 }
 
 // InitiateGithubLogin redirects the browser to the backend OAuth entry point.
-// Uses PUBLIC_API_URL when set (browser-facing), falling back to INSIGHTA_API_URL.
-// This matters in Docker: INSIGHTA_API_URL points to the internal container hostname
+// Uses PUBLIC_API_URL when set (browser-facing), falling back to API_URL.
+// This matters in Docker: API_URL points to the internal container hostname
 // (e.g. http://backend:8080) which the browser cannot resolve.
 func InitiateGithubLogin(w http.ResponseWriter, r *http.Request) {
 	apiURL := os.Getenv("PUBLIC_API_URL")
 	if apiURL == "" {
-		apiURL = os.Getenv("INSIGHTA_API_URL")
+		apiURL = os.Getenv("API_URL")
 	}
 	if apiURL == "" {
 		apiURL = "https://api.insighta.app"
@@ -52,7 +52,7 @@ func GithubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	apiURL := os.Getenv("INSIGHTA_API_URL")
+	apiURL := os.Getenv("API_URL")
 	if apiURL == "" {
 		apiURL = "https://api.insighta.app"
 	}
@@ -102,7 +102,7 @@ func GithubCallback(w http.ResponseWriter, r *http.Request) {
 func Logout(w http.ResponseWriter, r *http.Request) {
 	sess, err := session.Get(r)
 	if err == nil && sess.RefreshToken != "" {
-		apiURL := os.Getenv("INSIGHTA_API_URL")
+		apiURL := os.Getenv("API_URL")
 		if apiURL == "" {
 			apiURL = "https://api.insighta.app"
 		}
@@ -132,7 +132,7 @@ func AccountPage(w http.ResponseWriter, r *http.Request) {
 
 // buildOAuthURL constructs the GitHub OAuth URL going via our backend.
 func buildOAuthURL(r *http.Request) string {
-	apiURL := os.Getenv("INSIGHTA_API_URL")
+	apiURL := os.Getenv("API_URL")
 	if apiURL == "" {
 		apiURL = "https://api.insighta.app"
 	}
